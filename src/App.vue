@@ -44,10 +44,6 @@ const addTask = () => {
     editable: false,
     createdAt: new Date().getTime()
   })
-
-  // Clear input fields after adding the task
-  input_content.value = '';
-  input_category.value = null;
 }
 
 const removeTask = (task) => {
