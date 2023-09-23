@@ -22,7 +22,18 @@ watch(tasks, (newVal) => {
 })
 
 const addTask = () => {
-  if (input_content.value.trim() === '' || input_category.value === null) {
+  if (name.value === '') {
+    alert('Please enter a name.');
+    return
+  }
+
+  if (input_content.value.trim() === '') {
+    alert('Please write a task');
+    return
+  }
+
+  if (input_category.value === null) {
+    alert('Please choose a category.');
     return
   }
 
@@ -33,6 +44,10 @@ const addTask = () => {
     editable: false,
     createdAt: new Date().getTime()
   })
+
+  // Clear input fields after adding the task
+  input_content.value = '';
+  input_category.value = null;
 }
 
 const removeTask = (task) => {
