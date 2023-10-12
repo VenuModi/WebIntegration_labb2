@@ -6,6 +6,7 @@ const name = ref('')
 
 const input_content = ref('')
 const input_category = ref(null)
+const input_deadline = ref(null);
 
 const tasks_asc = computed(() => tasks.value.sort((a, b) => {
   return a.createdAt - b.createdAt
@@ -24,27 +25,42 @@ watch(tasks, (newVal) => {
 const addTask = () => {
   if (name.value === '') {
     alert('Please enter a name.');
-    return
+    return;
   }
 
   if (input_content.value.trim() === '') {
     alert('Please write a task');
-    return
+    return;
   }
 
   if (input_category.value === null) {
     alert('Please choose a category.');
-    return
+    return;
   }
 
-  tasks.value.push({
+  const currentTime = new Date().getTime();
+
+  const selectedDeadline = new Date(input_deadline.value).getTime();
+
+
+  if (selectedDeadline < currentTime) {
+    alert('Please select a deadline in the future.');
+    return;
+  }
+
+  const newTask = {
     content: input_content.value,
     category: input_category.value,
     done: false,
     editable: false,
-    createdAt: new Date().getTime()
-  })
-}
+    createdAt: currentTime,
+    deadline: input_deadline.value,
+    priority: "medium",
+  };
+
+  tasks.value.push(newTask);
+};
+
 
 const removeTask = (task) => {
   tasks.value = tasks.value.filter((t) => t !== task)
@@ -87,6 +103,11 @@ onMounted(() => {
             <div>Private</div>
           </label>
 
+          <label>
+            <input type="date" name="deadline" id="deadline" placeholder="Select a deadline" v-model="input_deadline" />
+            <div>Deadline</div>
+          </label>
+
         </div>
 
         <input type="submit" value="Add task" />
@@ -101,13 +122,23 @@ onMounted(() => {
           <label>
             <input type="checkbox" v-model="task.done" />
             <span :class="`bubble ${task.category == 'work'
-              ? 'work'
-              : 'private'
+              ? 'Work'
+              : 'Private'
               }`"></span>
           </label>
 
           <div class="task-content">
             <input type="text" v-model="task.content" />
+            <p v-if="task.deadline">Deadline: {{ task.deadline }}</p>
+
+            <!-- Display the priority -->
+            <p>Priority: {{ task.priority }}</p>
+            <!-- Add the <select> element for priority here -->
+            <select v-model="task.priority">
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
           </div>
 
           <div class="actions">
